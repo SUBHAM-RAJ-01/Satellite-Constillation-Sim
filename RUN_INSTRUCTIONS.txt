@@ -1,0 +1,170 @@
+================================================================================
+MEGA-CONSTELLATION PARALLEL SIMULATION MODELER
+Run Instructions
+================================================================================
+
+QUICK START
+-----------
+
+1. Verify Python installation:
+   > python --version
+   (Should be Python 3.6 or higher)
+
+2. Run the simulation:
+   > python main.py
+
+3. Select option from menu (1-5)
+
+
+COMMAND LINE OPTIONS
+--------------------
+
+Run with OSPF routing:
+> python main.py ospf
+
+Run with TSA routing:
+> python main.py tsa
+
+Compare both protocols:
+> python main.py compare
+
+Performance model only (fastest):
+> python main.py model
+
+Show help:
+> python main.py help
+
+
+DEMO MODE
+---------
+
+See individual component demonstrations:
+> python demo.py
+
+This shows step-by-step how each component works.
+
+
+INDIVIDUAL COMPONENTS
+---------------------
+
+Run network simulation only:
+> python network_simulator.py
+
+Run partition comparison only:
+> python partition_simulator.py
+
+Run performance model only:
+> python simulation_model.py
+
+
+EXPECTED OUTPUT
+---------------
+
+The simulation will display:
+1. Satellite constellation initialization
+2. User terminal deployment
+3. Network topology building
+4. Routing protocol execution
+5. Partition comparison (UTP vs LBTP)
+6. Performance analysis and speedup calculations
+
+Total execution time: 10-30 seconds for full simulation
+
+
+WHAT TO EXPECT
+--------------
+
+Network Statistics:
+- 900 satellites across 3 orbital shells
+- 1500 user terminals globally distributed
+- ~95-98% user connection rate
+- 10-15 neighbors per satellite average
+- 3-5 hops per route average
+
+Partitioning Results:
+- UTP load imbalance: ~30%
+- LBTP load imbalance: ~5%
+- LBTP improvement: ~24% better speedup
+
+Performance Metrics:
+- Serial time: ~68 minutes (theoretical)
+- UTP speedup: ~15.4x with 20 containers
+- LBTP speedup: ~19.05x with 20 containers
+- Time saved: ~0.85 minutes per simulation
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: "Python not found"
+Solution: Install Python from python.org
+
+Problem: "No module named 'satellite'"
+Solution: Ensure all .py files are in the same directory
+
+Problem: Simulation runs slowly
+Solution: Reduce number of satellites/users in main.py
+
+Problem: Want to modify parameters
+Solution: Edit constants in respective .py files
+
+
+FILES IN THIS PROJECT
+---------------------
+
+main.py                 - Main entry point (START HERE)
+demo.py                 - Component demonstrations
+simulation_model.py     - Performance model (theoretical)
+network_simulator.py    - Network simulation (actual)
+partition_simulator.py  - Partition comparison
+satellite.py           - Satellite entity
+user_terminal.py       - User terminal entity
+routing_protocols.py   - TSA and OSPF implementations
+README.md              - Full documentation
+QUICKSTART.md          - Quick start guide
+PROJECT_INFO.md        - Technical details
+RUN_INSTRUCTIONS.txt   - This file
+requirements.txt       - Dependencies (none needed)
+
+
+DOCUMENTATION
+-------------
+
+For detailed information, read:
+- QUICKSTART.md - Getting started guide
+- README.md - Complete documentation
+- PROJECT_INFO.md - Technical architecture
+
+
+CUSTOMIZATION
+-------------
+
+To change number of satellites/users:
+Edit main.py, line with PartitionSimulator()
+
+To change satellite parameters:
+Edit satellite.py constants
+
+To change routing parameters:
+Edit routing_protocols.py
+
+To change load imbalance factors:
+Edit simulation_model.py
+
+
+SUPPORT
+-------
+
+This is a self-contained educational project.
+All documentation is included in the project files.
+
+Read the documentation files for:
+- Technical details
+- Algorithm explanations
+- Performance characteristics
+- Extension possibilities
+
+
+================================================================================
+Ready to start? Run: python main.py
+================================================================================

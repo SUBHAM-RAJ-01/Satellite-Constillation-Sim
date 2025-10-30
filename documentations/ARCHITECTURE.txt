@@ -1,0 +1,434 @@
+================================================================================
+                        SYSTEM ARCHITECTURE
+================================================================================
+
+MEGA-CONSTELLATION PARALLEL SIMULATION MODELER
+Visual architecture and component relationships
+
+
+HIGH-LEVEL ARCHITECTURE
+-----------------------
+
+                    ┌─────────────────────┐
+                    │     User Input      │
+                    │    (main.py)        │
+                    └──────────┬──────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                │                             │
+                ▼                             ▼
+    ┌───────────────────┐         ┌──────────────────┐
+    │  Performance      │         │    Network       │
+    │  Model            │         │    Simulation    │
+    │  (Theoretical)    │         │    (Actual)      │
+    └───────────────────┘         └────────┬─────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+                ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+                │  Satellites  │   │    Users     │   │   Routing    │
+                │  (900 nodes) │   │ (1500 nodes) │   │  (TSA/OSPF)  │
+                └──────────────┘   └──────────────┘   └──────────────┘
+                                           │
+                                           ▼
+                                  ┌─────────────────┐
+                                  │  Partitioning   │
+                                  │  (UTP vs LBTP)  │
+                                  └─────────────────┘
+
+
+COMPONENT HIERARCHY
+-------------------
+
+main.py
+│
+├── Interactive Mode
+│   ├── Menu Display
+│   ├── User Input
+│   └── Option Routing
+│
+├── Command Line Mode
+│   ├── Argument Parsing
+│   └── Direct Execution
+│
+└── Execution Modes
+    ├── Performance Model Only
+    │   └── simulation_model.py
+    │
+    ├── Full Simulation (OSPF)
+    │   └── partition_simulator.py
+    │       ├── network_simulator.py
+    │       └── simulation_model.py
+    │
+    ├── Full Simulation (TSA)
+    │   └── partition_simulator.py
+    │       ├── network_simulator.py
+    │       └── simulation_model.py
+    │
+    └── Protocol Comparison
+        └── Both OSPF and TSA
+
+
+NETWORK SIMULATION FLOW
+-----------------------
+
+1. Initialize Satellites
+   ┌─────────────────────────────────┐
+   │ Create 900 satellites           │
+   │ - 3 orbital shells              │
+   │ - Random initial positions      │
+   │ - Calculate orbital velocities  │
+   └────────────┬────────────────────┘
+                │
+                ▼
+2. Initialize Users
+   ┌─────────────────────────────────┐
+   │ Create 1500 user terminals      │
+   │ - 6 geographical regions        │
+   │ - Random positions in regions   │
+   └────────────┬────────────────────┘
+                │
+                ▼
+3. Build Topology
+   ┌─────────────────────────────────┐
+   │ Calculate inter-satellite links │
+   │ - Distance calculation          │
+   │ - Communication range check     │
+   │ - Build adjacency lists         │
+   └────────────┬────────────────────┘
+                │
+                ▼
+4. Setup Routing
+   ┌─────────────────────────────────┐
+   │ Initialize routing protocol     │
+   │ TSA: Time slot assignment       │
+   │ OSPF: Link state database       │
+   └────────────┬────────────────────┘
+                │
+                ▼
+5. Connect Users
+   ┌─────────────────────────────────┐
+   │ Find nearest satellite for each │
+   │ - Distance calculation          │
+   │ - Elevation angle check         │
+   │ - Latency calculation           │
+   └────────────┬────────────────────┘
+                │
+                ▼
+6. Simulate Traffic
+   ┌─────────────────────────────────┐
+   │ Calculate routes                │
+   │ - Path finding (Dijkstra)       │
+   │ - Load tracking                 │
+   │ - Statistics collection         │
+   └────────────┬────────────────────┘
+                │
+                ▼
+7. Generate Statistics
+   ┌─────────────────────────────────┐
+   │ Network metrics                 │
+   │ - Connectivity                  │
+   │ - Load distribution             │
+   │ - Routing success rate          │
+   └─────────────────────────────────┘
+
+
+PARTITIONING FLOW
+-----------------
+
+Input: Satellites with loads
+│
+├── UTP (Uniform Topology Partitioning)
+│   │
+│   ├── Round-robin assignment
+│   │   For i = 0 to N-1:
+│   │     partition[i % k] ← satellite[i]
+│   │
+│   └── Calculate metrics
+│       - Max load per partition
+│       - Load imbalance (~30%)
+│
+└── LBTP (Load Balancing based Topology Partitioning)
+    │
+    ├── Sort satellites by load (descending)
+    │
+    ├── Greedy assignment
+    │   For each satellite:
+    │     Find partition with min load
+    │     Assign satellite to that partition
+    │     Update partition load
+    │
+    └── Calculate metrics
+        - Max load per partition
+        - Load imbalance (~5%)
+
+
+ROUTING PROTOCOL ARCHITECTURE
+------------------------------
+
+TSA (Time-Slotted Assignment)
+│
+├── Topology Building
+│   └── Build adjacency lists
+│
+├── Time Slot Assignment
+│   ├── Graph coloring algorithm
+│   ├── Avoid neighbor conflicts
+│   └── Minimize slot count
+│
+└── Route Calculation
+    ├── Dijkstra's algorithm
+    ├── Time slot penalty
+    └── Shortest path with time awareness
+
+
+OSPF (Open Shortest Path First)
+│
+├── Topology Building
+│   └── Build link state database
+│       ├── Neighbor discovery
+│       ├── Cost calculation
+│       └── Bandwidth estimation
+│
+├── Area Assignment
+│   └── Divide network into areas
+│       └── Reduce routing overhead
+│
+└── Route Calculation
+    ├── Dijkstra's SPF algorithm
+    ├── Cost-based routing
+    └── Shortest path calculation
+
+
+DATA FLOW
+---------
+
+User Input
+    │
+    ▼
+Main Controller (main.py)
+    │
+    ├─→ Performance Model
+    │       │
+    │       ├─→ Calculate CPU work
+    │       ├─→ Calculate memory
+    │       ├─→ Calculate speedup
+    │       └─→ Generate report
+    │
+    └─→ Network Simulation
+            │
+            ├─→ Create satellites
+            │       └─→ Orbital mechanics
+            │
+            ├─→ Create users
+            │       └─→ Geographical distribution
+            │
+            ├─→ Build topology
+            │       └─→ Inter-satellite links
+            │
+            ├─→ Setup routing
+            │       ├─→ TSA: Time slots
+            │       └─→ OSPF: Link states
+            │
+            ├─→ Connect users
+            │       └─→ Nearest satellite
+            │
+            ├─→ Simulate traffic
+            │       └─→ Route calculation
+            │
+            ├─→ Partition network
+            │       ├─→ UTP: Round-robin
+            │       └─→ LBTP: Load-aware
+            │
+            └─→ Generate statistics
+                    └─→ Performance metrics
+
+
+CLASS RELATIONSHIPS
+-------------------
+
+Satellite
+├── Properties
+│   ├── id, latitude, longitude, altitude
+│   ├── velocity, inclination
+│   ├── neighbors (list of Satellites)
+│   ├── routing_table (dict)
+│   └── load, active_connections
+│
+└── Methods
+    ├── update_position(time_delta)
+    ├── distance_to(other_satellite)
+    └── can_communicate(other_satellite)
+
+
+UserTerminal
+├── Properties
+│   ├── id, latitude, longitude, region
+│   ├── connected_satellite (Satellite)
+│   └── latency, data_rate
+│
+└── Methods
+    └── find_nearest_satellite(satellites)
+
+
+TSARouting / OSPFRouting
+├── Properties
+│   ├── satellites (list)
+│   ├── topology (dict)
+│   └── time_slots / link_state_db
+│
+└── Methods
+    ├── build_topology()
+    ├── assign_time_slots() / assign_areas()
+    └── calculate_route(source, dest)
+
+
+NetworkSimulator
+├── Properties
+│   ├── satellites (list)
+│   ├── users (list)
+│   └── routing_protocol (TSA/OSPF)
+│
+└── Methods
+    ├── initialize_satellites()
+    ├── initialize_users()
+    ├── setup_routing(protocol)
+    ├── connect_users_to_satellites()
+    ├── simulate_traffic()
+    └── get_network_statistics()
+
+
+PartitionSimulator
+├── Properties
+│   ├── num_satellites, num_users
+│   └── num_containers
+│
+└── Methods
+    ├── partition_utp(satellites)
+    ├── partition_lbtp(satellites)
+    ├── calculate_partition_metrics()
+    └── run_comparison(protocol)
+
+
+SimulationModel
+├── Properties
+│   ├── N, M, k_star (scenario params)
+│   ├── CPU/memory coefficients
+│   └── Load imbalance factors
+│
+└── Methods
+    ├── calculate_baseline_metrics()
+    ├── calculate_utp_performance()
+    ├── calculate_lbtp_performance()
+    └── generate_report()
+
+
+EXECUTION FLOW DIAGRAM
+----------------------
+
+Start
+  │
+  ├─→ Parse Arguments
+  │
+  ├─→ Select Mode
+  │   ├─→ Interactive: Show menu
+  │   └─→ CLI: Direct execution
+  │
+  ├─→ Execute Simulation
+  │   │
+  │   ├─→ Performance Model Only
+  │   │   └─→ Quick calculation (<1s)
+  │   │
+  │   ├─→ Network Simulation
+  │   │   ├─→ Initialize (2-5s)
+  │   │   ├─→ Build topology (3-8s)
+  │   │   ├─→ Simulate traffic (2-5s)
+  │   │   └─→ Calculate metrics (1-2s)
+  │   │
+  │   └─→ Partition Comparison
+  │       ├─→ Run network simulation
+  │       ├─→ Apply UTP
+  │       ├─→ Apply LBTP
+  │       ├─→ Compare results
+  │       └─→ Run performance model
+  │
+  ├─→ Display Results
+  │   ├─→ Network statistics
+  │   ├─→ Partition metrics
+  │   └─→ Performance analysis
+  │
+  └─→ End
+
+
+PERFORMANCE CHARACTERISTICS
+---------------------------
+
+Component               Complexity      Time
+─────────────────────────────────────────────
+Satellite Init          O(N)           <1s
+User Init               O(M)           <1s
+Topology Build          O(N²)          3-8s
+User Connection         O(M×N)         2-5s
+TSA Routing             O(V log V)     1-3s
+OSPF Routing            O(E log V)     1-3s
+UTP Partition           O(N)           <1s
+LBTP Partition          O(N log N)     <1s
+Traffic Simulation      O(R×V log V)   2-5s
+Statistics              O(N+M)         <1s
+─────────────────────────────────────────────
+Total (Full Sim)        -              10-30s
+
+
+MEMORY ARCHITECTURE
+-------------------
+
+Component               Memory
+────────────────────────────────
+Satellites (900)        ~180 MB
+Users (1500)            ~30 MB
+Topology                ~15 MB
+Routing Tables          ~25 MB
+────────────────────────────────
+Total Runtime           ~250 MB
+
+
+SCALABILITY
+-----------
+
+Parameter       Current    Max Tested    Complexity
+──────────────────────────────────────────────────
+Satellites      900        2000          O(N²)
+Users           1500       5000          O(M)
+Containers      20         100           O(k)
+Routes          100        1000          O(R)
+
+
+EXTENSION POINTS
+----------------
+
+1. New Routing Protocol
+   └─→ Add class to routing_protocols.py
+       Implement: build_topology(), calculate_route()
+
+2. New Partitioning Strategy
+   └─→ Add method to partition_simulator.py
+       Implement: partition_custom(satellites)
+
+3. New Satellite Type
+   └─→ Extend Satellite class in satellite.py
+       Add: new orbital parameters, behaviors
+
+4. Visualization
+   └─→ Create new visualization.py
+       Use: matplotlib, plotly, or custom
+
+5. Real-time Simulation
+   └─→ Add time-stepping to network_simulator.py
+       Implement: continuous position updates
+
+
+================================================================================
+For implementation details, see individual .py files
+For usage instructions, see GETTING_STARTED.txt
+================================================================================
