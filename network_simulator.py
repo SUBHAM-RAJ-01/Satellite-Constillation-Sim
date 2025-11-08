@@ -39,7 +39,7 @@ class NetworkSimulator:
             sat = Satellite(i, altitude, inclination)
             self.satellites.append(sat)
             
-        print(f"✓ Created {len(self.satellites)} satellites")
+        print(f"[OK] Created {len(self.satellites)} satellites")
         
     def initialize_users(self):
         """Create user terminals in different regions"""
@@ -67,7 +67,7 @@ class NetworkSimulator:
             user = UserTerminal(i, region)
             self.users.append(user)
             
-        print(f"✓ Created {len(self.users)} user terminals")
+        print(f"[OK] Created {len(self.users)} user terminals")
         
     def setup_routing(self, protocol="OSPF"):
         """Setup routing protocol"""
@@ -77,14 +77,14 @@ class NetworkSimulator:
             self.routing_protocol = TSARouting(self.satellites)
             topology = self.routing_protocol.build_topology()
             slots = self.routing_protocol.assign_time_slots()
-            print(f"✓ TSA topology built with {len(topology)} nodes")
-            print(f"✓ Assigned {max(slots.values()) + 1} time slots")
+            print(f"[OK] TSA topology built with {len(topology)} nodes")
+            print(f"[OK] Assigned {max(slots.values()) + 1} time slots")
         elif protocol == "OSPF":
             self.routing_protocol = OSPFRouting(self.satellites)
             link_states = self.routing_protocol.build_topology()
             areas = self.routing_protocol.assign_areas()
-            print(f"✓ OSPF topology built with {len(link_states)} nodes")
-            print(f"✓ Network divided into {max(areas.values()) + 1} areas")
+            print(f"[OK] OSPF topology built with {len(link_states)} nodes")
+            print(f"[OK] Network divided into {max(areas.values()) + 1} areas")
         else:
             raise ValueError(f"Unknown protocol: {protocol}")
             
@@ -97,7 +97,7 @@ class NetworkSimulator:
             if user.find_nearest_satellite(self.satellites):
                 connected += 1
                 
-        print(f"✓ Connected {connected}/{len(self.users)} users to satellites")
+        print(f"[OK] Connected {connected}/{len(self.users)} users to satellites")
         
     def simulate_traffic(self, num_routes=100):
         """Simulate network traffic and routing"""
@@ -124,8 +124,8 @@ class NetworkSimulator:
                     
         avg_hops = total_hops / successful_routes if successful_routes > 0 else 0
         
-        print(f"✓ Successful routes: {successful_routes}/{num_routes}")
-        print(f"✓ Average hops per route: {avg_hops:.2f}")
+        print(f"[OK] Successful routes: {successful_routes}/{num_routes}")
+        print(f"[OK] Average hops per route: {avg_hops:.2f}")
         
         return {
             'successful_routes': successful_routes,

@@ -1,19 +1,8 @@
 # Mega-Constellation Parallel Simulation Modeler
+# Python 3.6+ required
+
 # No external dependencies required
-# Python 3.6+ standard library only
-
-# The project uses only Python standard library modules:
-# - math (for orbital calculations)
-# - random (for initialization)
-# - heapq (for routing algorithms)
-# - collections (for data structures)
-# - sys (for command line arguments)
-
-# Minimum Python version: 3.6
-# Recommended Python version: 3.8+
-
-# To verify your Python version:
-# python --version
+# The project uses only Python standard library
 
 # To run the simulation:
-# python main.py
+# python main.py report

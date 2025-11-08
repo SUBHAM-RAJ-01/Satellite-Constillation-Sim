@@ -30,11 +30,17 @@ Simulates **900 satellites** and **1500 users** to compare two work distribution
 ## 🚀 Quick Start
 
 ```bash
+# ⭐ Complete integrated report (2 minutes - RECOMMENDED)
+python main.py report
+
 # Performance model only (1 second)
 python main.py model
 
 # Full simulation (30 seconds)
 python main.py ospf
+
+# Communication simulation (packet transmission)
+python main.py communication
 
 # Interactive demos
 python demo.py

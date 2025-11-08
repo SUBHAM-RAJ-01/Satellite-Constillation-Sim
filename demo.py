@@ -187,9 +187,9 @@ def main():
         print("All demos completed!")
         print("=" * 80)
         print("\nNext steps:")
-        print("  • Run 'python main.py' for full simulation")
-        print("  • Read QUICKSTART.md for usage guide")
-        print("  • Read PROJECT_INFO.md for technical details")
+        print("  - Run 'python main.py' for full simulation")
+        print("  - Read QUICKSTART.md for usage guide")
+        print("  - Read PROJECT_INFO.md for technical details")
         print("=" * 80)
         
     except KeyboardInterrupt:
